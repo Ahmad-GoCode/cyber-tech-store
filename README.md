@@ -25,7 +25,7 @@ It features interactive product cards, customer reviews, newsletter signup, and 
 ---
 ## 📸 Screenshots
 
-![Cyber Tech Store Screenshot](https://user-images.githubusercontent.com/your-github-username/your-repo/screenshot.png)
+[![Cyber Tech Store Screenshot]([https://user-images.githubusercontent.com/your-github-username/your-repo/screenshot.png](https://github.com/Ahmad-GoCode/cyber-tech-store/blob/main/Screenshot%202025-09-02%20214332.png))](https://github.com/Ahmad-GoCode/cyber-tech-store/blob/main/Screenshot%202025-09-02%20214332.png)
 
 ---
 ## 🚀 Getting Started
