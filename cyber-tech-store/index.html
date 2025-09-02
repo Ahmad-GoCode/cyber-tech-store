@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Master Mind | Cyber Tech Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+    <style>
+        :root {
+            --primary: #e63946;
+            --secondary: #1a1a1a;
+            --accent: #ff2d75;
+            --text: #f1faee;
+            --highlight: #ff2d75;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            color: var(--text);
+            background-color: var(--secondary);
+            overflow-x: hidden;
+        }
+
+        .cyber-font {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .neon-text {
+            text-shadow: 0 0 5px var(--primary), 0 0 10px var(--primary), 0 0 15px var(--primary);
+        }
+
+        .neon-border {
+            box-shadow: 0 0 5px var(--primary), 0 0 10px var(--primary), inset 0 0 5px var(--primary);
+        }
+
+        .neon-hover:hover {
+            box-shadow: 0 0 10px var(--accent), 0 0 20px var(--accent), inset 0 0 10px var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .glitch {
+            position: relative;
+        }
+
+        .glitch::before, .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--secondary);
+        }
+
+        .glitch::before {
+            left: 2px;
+            text-shadow: -2px 0 #ff00c1;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 5s infinite linear alternate-reverse;
+        }
+
+        .glitch::after {
+            left: -2px;
+            text-shadow: -2px 0 #00fff9, 2px 2px #ff00c1;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim2 5s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim {
+            0% { clip: rect(31px, 9999px, 94px, 0); }
+            10% { clip: rect(112px, 9999px, 76px, 0); }
+            20% { clip: rect(85px, 9999px, 77px, 0); }
+            30% { clip: rect(27px, 9999px, 97px, 0); }
+            40% { clip: rect(64px, 9999px, 98px, 0); }
+            50% { clip: rect(61px, 9999px, 85px, 0); }
+            60% { clip: rect(99px, 9999px, 114px, 0); }
+            70% { clip: rect(34px, 9999px, 115px, 0); }
+            80% { clip: rect(98px, 9999px, 129px, 0); }
+            90% { clip: rect(43px, 9999px, 96px, 0); }
+            100% { clip: rect(82px, 9999px, 64px, 0); }
+        }
+
+        @keyframes glitch-anim2 {
+            0% { clip: rect(65px, 9999px, 119px, 0); }
+            10% { clip: rect(144px, 9999px, 41px, 0); }
+            20% { clip: rect(6px, 9999px, 140px, 0); }
+            30% { clip: rect(10px, 9999px, 105px, 0); }
+            40% { clip: rect(2px, 9999px, 83px, 0); }
+            50% { clip: rect(98px, 9999px, 140px, 0); }
+            60% { clip: rect(15px, 9999px, 132px, 0); }
+            70% { clip: rect(54px, 9999px, 49px, 0); }
+            80% { clip: rect(124px, 9999px, 43px, 0); }
+            90% { clip: rect(109px, 9999px, 130px, 0); }
+            100% { clip: rect(15px, 9999px, 87px, 0); }
+        }
+
+        .product-card {
+            perspective: 1000px;
+            transform-style: preserve-3d;
+            transition: all 0.5s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px) rotateX(5deg);
+        }
+
+        .product-card-inner {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .product-card:hover .product-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .product-card-front, .product-card-back {
+            backface-visibility: hidden;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .product-card-back {
+            transform: rotateY(180deg);
+        }
+
+        .search-suggestions {
+            display: none;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .search-suggestions.active {
+            display: block;
+        }
+
+        .page-transition {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .whatsapp-float {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            bottom: 40px;
+            right: 40px;
+            background-color: #25d366;
+            color: #FFF;
+            border-radius: 50px;
+            text-align: center;
+            font-size: 30px;
+            box-shadow: 2px 2px 3px #999;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px #25d366;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(37, 211, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
+    </style>
+</head>
+<body class="page-transition" id="vanta-bg">
+    <!-- Navigation -->
+    <nav class="bg-black bg-opacity-80 backdrop-filter backdrop-blur-lg border-b border-red-500 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="cyber-font text-3xl font-bold neon-text">THE MASTER MIND</h1>
+                    </div>
+                    <div class="hidden md:block">
+                        <div class="ml-10 flex items-baseline space-x-4">
+                            <a href="#" class="text-white hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:neon-border">Home</a>
+                            <a href="#" class="text-white hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:neon-border">Best Sellers</a>
+                            <a href="#" class="text-white hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:neon-border">Cart</a>
+                            <a href="#" class="text-white hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:neon-border">Contact Us</a>
+                            <a href="#" class="text-white hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:neon-border">Shipping Policy</a>
+                            <a href="#" class="text-white hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:neon-border">About Us</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-4 flex items-center md:ml-6">
+                        <div class="relative mx-4">
+                            <input type="text" id="search" class="bg-gray-900 text-white px-4 py-2 rounded-full focus:outline-none focus:ring-2 focus:ring-red-500 w-64" placeholder="Search products...">
+                            <div id="search-suggestions" class="search-suggestions absolute left-0 mt-2 w-full bg-gray-900 border border-red-500 rounded-lg shadow-lg z-50">
+                                <!-- Suggestions will appear here -->
+                            </div>
+                        </div>
+                        <button class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 neon-hover mr-2">Login</button>
+                        <button class="bg-transparent border border-red-500 hover:bg-red-500 text-white px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 neon-hover">Sign Up</button>
+                    </div>
+                </div>
+                <div class="-mr-2 flex md:hidden">
+                    <button type="button" id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile menu -->
+        <div class="md:hidden hidden" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <input type="text" class="bg-gray-900 text-white px-4 py-2 rounded-full focus:outline-none focus:ring-2 focus:ring-red-500 w-full mb-2" placeholder="Search products...">
+                <a href="#" class="text-white block px-3 py-2 rounded-md text-base font-medium">Home</a>
+                <a href="#" class="text-white block px-3 py-2 rounded-md text-base font-medium">Best Sellers</a>
+                <a href="#" class="text-white block px-3 py-2 rounded-md text-base font-medium">Cart</a>
+                <a href="#" class="text-white block px-3 py-2 rounded-md text-base font-medium">Contact Us</a>
+                <a href="#" class="text-white block px-3 py-2 rounded-md text-base font-medium">Shipping Policy</a>
+                <a href="#" class="text-white block px-3 py-2 rounded-md text-base font-medium">About Us</a>
+                <div class="pt-4 pb-2">
+                    <button class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 neon-hover mb-2">Login</button>
+                    <button class="w-full bg-transparent border border-red-500 hover:bg-red-500 text-white px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 neon-hover">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative">
+        <div class="absolute inset-0 bg-black opacity-50"></div>
+        <div class="relative max-w-7xl mx-auto py-24 px-4 sm:py-32 sm:px-6 lg:px-8 text-center">
+            <h1 class="cyber-font text-5xl md:text-7xl font-extrabold tracking-tight text-white neon-text mb-6 glitch" data-text="MASTER YOUR TECH">
+                MASTER YOUR TECH
+            </h1>
+            <p class="mt-6 max-w-3xl mx-auto text-xl text-gray-300">
+                Cutting-edge technology with a hacker's touch. Premium gear for the digital revolution.
+            </p>
+            <div class="mt-10">
+                <a href="#" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 neon-hover transition-all duration-300">
+                    Explore Products
+                    <svg class="ml-3 -mr-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="flex justify-between items-center mb-10">
+            <h2 class="cyber-font text-3xl font-bold text-white neon-text">Featured Products</h2>
+            <div class="flex items-center">
+                <button id="dark-mode-toggle" class="mr-4 text-gray-400 hover:text-white transition-colors duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </button>
+                <a href="#" class="text-red-400 hover:text-red-300 flex items-center transition-colors duration-300">
+                    View All
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <!-- Product Card 1 -->
+            <div class="product-card bg-gray-900 rounded-lg overflow-hidden border border-gray-800 hover:border-red-500 transition-all duration-300 relative h-96">
+                <div class="product-card-inner h-full">
+                    <div class="product-card-front h-full flex flex-col">
+                        <div class="bg-gray-800 h-48 flex items-center justify-center p-4">
+                            <img src="https://images.unsplash.com/photo-1556740738-b6a63e27c4df?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Product" class="max-h-full max-w-full">
+                        </div>
+                        <div class="p-4 flex-grow flex flex-col">
+                            <div class="flex justify-between items-start">
+                                <h3 class="text-lg font-bold text-white">Quantum Keyboard</h3>
+                                <span class="bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded">BEST SELLER</span>
+                            </div>
+                            <p class="text-gray-400 text-sm mt-2">Mechanical keyboard with RGB lighting and programmable macros</p>
+                            <div class="mt-auto pt-4">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-red-400 font-bold text-xl">$129.99</span>
+                                    <button class="add-to-cart bg-gray-800 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition-colors duration-300 neon-hover" data-product="Quantum Keyboard" data-price="129.99">
+                                        Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-card-back h-full flex flex-col justify-center items-center p-6 bg-gray-800">
+                        <h3 class="text-lg font-bold text-white mb-2">Quantum Keyboard</h3>
+                        <ul class="text-gray-300 text-sm space-y-2 mb-4">
+                            <li>• Cherry MX Red switches</li>
+                            <li>• 16.8 million RGB colors</li>
+                            <li>• N-key rollover</li>
+                            <li>• Aluminum frame</li>
+                            <li>• USB Type-C</li>
+                        </ul>
+                        <div class="flex space-x-4">
+                            <button class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm transition-colors duration-300 neon-hover">
+                                View Details
+                            </button>
+                            <button class="add-to-cart bg-gray-700 hover:bg-red-600 text-white px-4 py-2 rounded text-sm transition-colors duration-300 neon-hover" data-product="Quantum Keyboard" data-price="129.99">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Card 2 -->
+            <div class="product-card bg-gray-900 rounded-lg overflow-hidden border border-gray-800 hover:border-red-500 transition-all duration-300 relative h-96">
+                <div class="product-card-inner h-full">
+                    <div class="product-card-front h-full flex flex-col">
+                        <div class="bg-gray-800 h-48 flex items-center justify-center p-4">
+                            <img src="https://images.unsplash.com/photo-1527814050087-3793815479db?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Product" class="max-h-full max-w-full">
+                        </div>
+                        <div class="p-4 flex-grow flex flex-col">
+                            <div class="flex justify-between items-start">
+                                <h3 class="text-lg font-bold text-white">Neon Mouse</h3>
+                                <span class="bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded">NEW</span>
+                            </div>
+                            <p class="text-gray-400 text-sm mt-2">High-precision gaming mouse with customizable weight system</p>
+                            <div class="mt-auto pt-4">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-red-400 font-bold text-xl">$79.99</span>
+                                    <button class="add-to-cart bg-gray-800 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition-colors duration-300 neon-hover" data-product="Neon Mouse" data-price="79.99">
+                                        Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-card-back h-full flex flex-col justify-center items-center p-6 bg-gray-800">
+                        <h3 class="text-lg font-bold text-white mb-2">Neon Mouse</h3>
+                        <ul class="text-gray-300 text-sm space-y-2 mb-4">
+                            <li>• 16,000 DPI optical sensor</li>
+                            <li>• 7 programmable buttons</li>
+                            <li>• Adjustable weight (up to 128g)</li>
+                            <li>• Braided fiber cable</li>
+                            <li>• Omron switches</li>
+                        </ul>
+                        <div class="flex space-x-4">
+                            <button class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm transition-colors duration-300 neon-hover">
+                                View Details
+                            </button>
+                            <button class="add-to-cart bg-gray-700 hover:bg-red-600 text-white px-4 py-2 rounded text-sm transition-colors duration-300 neon-hover" data-product="Neon Mouse" data-price="79.99">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Card 3 -->
+            <div class="product-card bg-gray-900 rounded-lg overflow-hidden border border-gray-800 hover:border-red-500 transition-all duration-300 relative h-96">
+                <div class="product-card-inner h-full">
+                    <div class="product-card-front h-full flex flex-col">
+                        <div class="bg-gray-800 h-48 flex items-center justify-center p-4">
+                            <img src="https://images.unsplash.com/photo-1593642632823-8f785ba67e45?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Product" class="max-h-full max-w-full">
+                        </div>
+                        <div class="p-4 flex-grow flex flex-col">
+                            <div class="flex justify-between items-start">
+                                <h3 class="text-lg font-bold text-white">Cyber Headset</h3>
+                                <span class="bg-blue-600 text-white text-xs font-semibold px-2 py-1 rounded">LIMITED</span>
+                            </div>
+                            <p class="text-gray-400 text-sm mt-2">Wireless gaming headset with 7.1 surround sound and noise cancellation</p>
+                            <div class="mt-auto pt-4">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-red-400 font-bold text-xl">$149.99</span>
+                                    <button class="add-to-cart bg-gray-800 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition-colors duration-300 neon-hover" data-product="Cyber Headset" data-price="149.99">
+                                        Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-card-back h-full flex flex-col justify-center items-center p-6 bg-gray-800">
+                        <h3 class="text-lg font-bold text-white mb-2">Cyber Headset</h3>
+                        <ul class="text-gray-300 text-sm space-y-2 mb-4">
+                            <li>• 50mm neodymium drivers</li>
+                            <li>• 2.4GHz wireless with USB dongle</li>
+                            <li>• 20-hour battery life</li>
+                            <li>• Flip-to-mute microphone</li>
+                            <li>• Memory foam ear cushions</li>
+                        </ul>
+                        <div class="flex space-x-4">
+                            <button class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm transition-colors duration-300 neon-hover">
+                                View Details
+                            </button>
+                            <button class="add-to-cart bg-gray-700 hover:bg-red-600 text-white px-4 py-2 rounded text-sm transition-colors duration-300 neon-hover" data-product="Cyber Headset" data-price="149.99">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Card 4 -->
+            <div class="product-card bg-gray-900 rounded-lg overflow-hidden border border-gray-800 hover:border-red-500 transition-all duration-300 relative h-96">
+                <div class="product-card-inner h-full">
+                    <div class="product-card-front h-full flex flex-col">
+                        <div class="bg-gray-800 h-48 flex items-center justify-center p-4">
+                            <img src="https://images.unsplash.com/photo-1591488320449-011701bb6704?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Product" class="max-h-full max-w-full">
+                        </div>
+                        <div class="p-4 flex-grow flex flex-col">
+                            <div class="flex justify-between items-start">
+                                <h3 class="text-lg font-bold text-white">Hacker's Laptop</h3>
+                                <span class="bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded">PREMIUM</span>
+                            </div>
+                            <p class="text-gray-400 text-sm mt-2">Ultra-portable laptop with security-focused hardware and software</p>
+                            <div class="mt-auto pt-4">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-red-400 font-bold text-xl">$1,299.99</span>
+                                    <button class="add-to-cart bg-gray-800 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition-colors duration-300 neon-hover" data-product="Hacker's Laptop" data-price="1299.99">
+                                        Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-card-back h-full flex flex-col justify-center items-center p-6 bg-gray-800">
+                        <h3 class="text-lg font-bold text-white mb-2">Hacker's Laptop</h3>
+                        <ul class="text-gray-300 text-sm space-y-2 mb-4">
+                            <li>• Intel Core i7-1165G7</li>
+                            <li>• 16GB DDR4 RAM</li>
+                            <li>• 1TB NVMe SSD</li>
+                            <li>• 14" FHD IPS matte display</li>
+                            <li>• Hardware kill switches</li>
+                            <li>• Preloaded with Kali Linux</li>
+                        </ul>
+                        <div class="flex space-x-4">
+                            <button class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm transition-colors duration-300 neon-hover">
+                                View Details
+                            </button>
+                            <button class="add-to-cart bg-gray-700 hover:bg-red-600 text-white px-4 py-2 rounded text-sm transition-colors duration-300 neon-hover" data-product="Hacker's Laptop" data-price="1299.99">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Special Offer Banner -->
+    <section class="bg-gradient-to-r from-red-900 to-black py-8 px-4 sm:px-6 lg:px-8 mb-12 neon-border">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center">
+                <h2 class="cyber-font text-3xl font-bold text-white mb-2 neon-text">SPECIAL OFFER</h2>
+                <p class="text-xl text-gray-300 mb-6">Get 15% off on all products this week only! Use code: <span class="text-red-400 font-bold">MASTER15</span></p>
+                <button class="bg-white text-red-600 hover:bg-red-600 hover:text-white px-6 py-3 rounded-md text-lg font-medium transition-all duration-300 neon-hover">
+                    Shop Now
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Best Sellers -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <h2 class="cyber-font text-3xl font-bold text-white neon-text mb-10">Best Sellers</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Best Seller 1 -->
+            <div class="bg-gray-900 rounded-lg overflow-hidden border border-red-500 hover:border-red-400 transition-all duration-300 relative group">
+                <div class="relative">
+                    <img src="https://images.unsplash.com/photo-1592155931584-901ac15763e3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Product" class="w-full h-64 object-cover">
+                    <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <button class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-md text-lg font-medium transition-all duration-300 neon-hover">
+                            Quick View
+                        </button>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="flex justify-between items-start">
+                        <h3 class="text-xl font-bold text-white">Stealth Router</h3>
+                        <div class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                            <span class="text-gray-300 ml-1">4.8</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-sm mt-2">High-performance router with advanced security features and VPN support</p>
+                    <div class="mt-4 flex justify-between items-center">
+                        <span class="text-red-400 font-bold text-xl">$199.99</span>
+                        <button class="add-to-cart bg-gray-800 hover:bg-red-600 text-white px-4 py-2 rounded text-sm transition-colors duration-300 neon-hover" data-product="Stealth Router" data-price="199.99">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Best Seller 2 -->
+            <div class="bg-gray-900 rounded-lg overflow-hidden border border-red-500 hover:border-red-400 transition-all duration-300 relative group">
+                <div class="relative">
+                    <img src="https://images.unsplash.com/photo-1546054454-aa26e2b734c7?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Product" class="w-full h-64 object-cover">
+                    <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <button class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-md text-lg font-medium transition-all duration-300 neon-hover">
+                            Quick View
+                        </button>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="flex justify-between items-start">
+                        <h3 class="text-xl font-bold text-white">Crypto Wallet</h3>
+                        <div class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                            <span class="text-gray-300 ml-1">4.9</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-sm mt-2">Hardware wallet for secure storage of cryptocurrencies and digital assets</p>
+                    <div class="mt-4 flex justify-between items-center">
+                        <span class="text-red-400 font-bold text-xl">$149.99</span>
+                        <button class="add-to-cart bg-gray-800 hover:bg-red-600 text-white px-4 py-2 rounded text-sm transition-colors duration-300 neon-hover" data-product="Crypto Wallet" data-price="149.99">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Best Seller 3 -->
+            <div class="bg-gray-900 rounded-lg overflow-hidden border border-red-500 hover:border-red-400 transition-all duration-300 relative group">
+                <div class="relative">
+                    <img src="https://images.unsplash.com/photo-1593642702909-dec73df255d7?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Product" class="w-full h-64 object-cover">
+                    <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <button class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-md text-lg font-medium transition-all duration-300 neon-hover">
+                            Quick View
+                        </button>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="flex justify-between items-start">
+                        <h3 class="text-xl font-bold text-white">Hacker's Toolkit</h3>
+                        <div class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                            <span class="text-gray-300 ml-1">4.7</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-sm mt-2">Complete set of tools for penetration testing and security auditing</p>
+                    <div class="mt-4 flex justify-between items-center">
+                        <span class="text-red-400 font-bold text-xl">$299.99</span>
+                        <button class="add-to-cart bg-gray-800 hover:bg-red-600 text-white px-4 py-2 rounded text-sm transition-colors duration-300 neon-hover" data-product="Hacker's Toolkit" data-price="299.99">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <h2 class="cyber-font text-3xl font-bold text-white neon-text mb-10">Customer Reviews</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Review 1 -->
+            <div class="bg-gray-900 rounded-lg p-6 border border-gray-800 hover:border-red-500 transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <div class="h-10 w-10 rounded-full bg-red-600 flex items-center justify-center text-white font-bold">JD</div>
+                    <div class="ml-4">
+                        <h4 class="font-bold text-white">John D.</h4>
+                        <div class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-gray-300">The Quantum Keyboard is absolutely amazing! The build quality is superb and the RGB lighting is customizable beyond anything I've seen before. Highly recommend!</p>
+                <div class="mt-4 text-sm text-gray-400">Reviewed on: 15 May 2023</div>
+            </div>
+
+            <!-- Review 2 -->
+            <div class="bg-gray-900 rounded-lg p-6 border border-gray-800 hover:border-red-500 transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <div class="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">SM</div>
+                    <div class="ml-4">
+                        <h4 class="font-bold text-white">Sarah M.</h4>
+                        <div class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.� 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-gray-300">The Hacker's Laptop is perfect for my security work. The hardware kill switches are a game-changer. Only wish the battery life was a bit longer.</p>
+                <div class="mt-4 text-sm text-gray-400">Reviewed on: 2 June 2023</div>
+            </div>
+
+            <!-- Review 3 -->
+            <div class="bg-gray-900 rounded-lg p-6 border border-gray-800 hover:border-red-500 transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <div class="h-10 w-10 rounded-full bg-green-600 flex items-center justify-center text-white font-bold">AK</div>
+                    <div class="ml-4">
+                        <h4 class="font-bold text-white">Alex K.</h4>
+                        <div class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-gray-300">The Master Mind has the best customer service I've ever experienced. My Crypto Wallet arrived with a small issue, and they replaced it immediately with express shipping. Will definitely shop here again!</p>
+                <div class="mt-4 text-sm text-gray-400">Reviewed on: 22 April 2023</div>
+            </div>
+        </div>
+
+        <!-- Add Review Form -->
+        <div class="mt-12 bg-gray-900 rounded-lg p-6 border border-gray-800">
+            <h3 class="text-xl font-bold text-white mb-4">Leave a Review</h3>
+            <form id="review-form">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-300 mb-1">Your Name</label>
+                        <input type="text" id="name" class="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-red-500">
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-300 mb-1">Email (optional)</label>
+                        <input type="email" id="email" class="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-red-500">
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <label for="product" class="block text-sm font-medium text-gray-300 mb-1">Product Reviewed</label>
+                    <select id="product" class="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-red-500">
+                        <option value="">Select a product</option>
+                        <option value="Quantum Keyboard">Quantum Keyboard</option>
+                        <option value="Neon Mouse">Neon Mouse</option>
+                        <option value="Cyber Headset">Cyber Headset</option>
+                        <option value="Hacker's Laptop">Hacker's Laptop</option>
+                        <option value="Stealth Router">Stealth Router</option>
+                        <option value="Crypto Wallet">Crypto Wallet</option>
+                        <option value="Hacker's Toolkit">Hacker's Toolkit</option>
+                    </select>
+                </div>
+                <div class="mt-4">
+                    <label class="block text-sm font-medium text-gray-300 mb-1">Rating</label>
+                    <div class="flex space-x-2">
+                        <button type="button" class="star-rating text-gray-400 hover:text-yellow-400" data-rating="1">★</button>
+                        <button type="button" class="star-rating text-gray-400 hover:text-yellow-400" data-rating="2">★</button>
+                        <button type="button" class="star-rating text-gray-400 hover:text-yellow-400" data-rating="3">★</button>
+                        <button type="button" class="star-rating text-gray-400 hover:text-yellow-400" data-rating="4">★</button>
+                        <button type="button" class="star-rating text-gray-400 hover:text-yellow-400" data-rating="5">★</button>
+                    </div>
+                    <input type="hidden" id="rating" value="0">
+                </div>
+                <div class="mt-4">
+                    <label for="review" class="block text-sm font-medium text-gray-300 mb-1">Your Review</label>
+                    <textarea id="review" rows="4" class="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-red-500"></textarea>
+                </div>
+                <div class="mt-6">
+                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-md text-sm font-medium transition-all duration-300 neon-hover">
+                        Submit Review
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Newsletter Subscription -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="bg-gradient-to-r from-red-900 to-black rounded-xl p-8 md:p-12 neon-border">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="mb-6 md:mb-0 md:mr-8">
+                    <h2 class="cyber-font text-3xl font-bold text-white neon-text mb-2">JOIN OUR NEWSLETTER</h2>
+                    <p class="text-gray-300">Get exclusive offers, product updates, and security tips straight to your inbox.</p>
+                </div>
+                <form id="newsletter-form" class="flex flex-col sm:flex-row w-full md:w-auto">
+                    <input type="email" placeholder="Your email address" class="bg-gray-900 text-white px-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 mb-2 sm:mb-0 sm:mr-2 w-full">
+                    <button type="submit" class="bg-white text-red-600 hover:bg-red-600 hover:text-white px-6 py-3 rounded-md text-lg font-medium transition-all duration-300 neon-hover whitespace-nowrap">
+                        Subscribe
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black bg-opacity-80 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="cyber-font text-xl font-bold text-white neon-text mb-4">THE MASTER MIND</h3>
+                    <p class="text-gray-400">Cutting-edge technology with a hacker's touch. Premium gear for the digital revolution.</p>
+                    <div class="flex space-x-4 mt-6">
+                        <a href="#" class="text-gray-400 hover:text-red-400 transition-colors duration-300">
+                            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z" />
+                            </svg>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-red-400 transition-colors duration-300">
+                            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2.163c3.
+</body>
+</html>
