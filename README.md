@@ -68,7 +68,7 @@ For major changes, please open an issue first to discuss what you would like to 
 ---
 ## 📄 License
 
-[MIT](LICENSE)
+[[MIT](LICENSE)](https://github.com/Ahmad-GoCode/cyber-tech-store/blob/main/license)
 
 ---
 
