@@ -25,14 +25,14 @@ It features interactive product cards, customer reviews, newsletter signup, and 
 ---
 ## 📸 Screenshots
 
-[![Cyber Tech Store Screenshot]([https://user-images.githubusercontent.com/your-github-username/your-repo/screenshot.png](https://github.com/Ahmad-GoCode/cyber-tech-store/blob/main/Screenshot%202025-09-02%20214332.png))](https://github.com/Ahmad-GoCode/cyber-tech-store/blob/main/Screenshot%202025-09-02%20214332.png)
+[![Cyber Tech Store Screenshot]([https://user-images.githubusercontent.com/your-github-username/your-repo/screenshot.png](https://github.com/Ahmad-GoCode/cyber-tech-store/blob/main/Screenshot%202025-09-02%20214332.png))](https://github.com/Ahmed-GoCode/cyber-tech-store/blob/main/Screenshot%202025-09-02%20214332.png)
 
 ---
 ## 🚀 Getting Started
 
 ### 1. **Clone the repository**
 ```bash
-git clone https://github.com/your-username/cyber-tech-store.git
+git clone https://github.com/Ahmed-GoCode/cyber-tech-store.git
 cd cyber-tech-store
 ```
 
@@ -68,7 +68,7 @@ For major changes, please open an issue first to discuss what you would like to 
 ---
 ## 📄 License
 
-[[MIT](LICENSE)](https://github.com/Ahmad-GoCode/cyber-tech-store/blob/main/license)
+[[MIT](LICENSE)](https://github.com/Ahmed-GoCode/cyber-tech-store/blob/main/license)
 
 ---
 
